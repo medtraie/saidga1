@@ -1,0 +1,4 @@
+project_id = "wobaeeyxtkewpbwgwcph"
+
+[functions.gpswox]
+verify_jwt = false

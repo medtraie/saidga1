@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="fr" translate="no" class="notranslate">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="google" content="notranslate" />
+    <title>SFT GAZ - Système de Distribution de Gaz</title>
+    <meta name="description" content="Application moderne de gestion de distribution de gaz avec suivi d'inventaire, camions, chauffeurs et échanges" />
+    <meta name="author" content="SFT GAZ" />
+    <meta name="theme-color" content="#0f172a" />
+    <link rel="icon" type="image/x-icon" href="/favicon.ico?v=20260322sft10" sizes="any" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png?v=20260322sft10" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png?v=20260322sft10" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=20260322sft10" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <meta property="og:title" content="SFT GAZ - Système de Distribution de Gaz" />
+    <meta property="og:description" content="Application moderne de gestion de distribution de gaz avec suivi d'inventaire, camions, chauffeurs et échanges" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@lovable_dev" />
+    <meta name="twitter:image" content="https://lovable.dev/opengraph-image-p98pqg.png" />
+
+    <!-- Google Maps JavaScript API with Morocco Region (gl=MA) & French (hl=fr) -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyANl_xzJcEYaItw6TNeqTJ-CRHeuYjLjp8&region=MA&language=fr&libraries=places,geometry"></script>
+  </head>
+
+  <body>
+    <script>
+      (() => {
+        const key = "__sft_sw_cleanup_done_v2";
+        try {
+          if (localStorage.getItem(key) === "1") return;
+        } catch {
+          return;
+        }
+        const hasSw = "serviceWorker" in navigator;
+        const hasCaches = "caches" in window;
+        if (!hasSw && !hasCaches) return;
+        (async () => {
+          let cleaned = false;
+          try {
+            if (hasSw) {
+              const registrations = await navigator.serviceWorker.getRegistrations();
+              if (registrations.length > 0) {
+                cleaned = true;
+                await Promise.all(registrations.map((r) => r.unregister()));
+              }
+            }
+          } catch {}
+          try {
+            if (hasCaches) {
+              const keys = await caches.keys();
+              if (keys.length > 0) {
+                cleaned = true;
+                await Promise.all(keys.map((k) => caches.delete(k)));
+              }
+            }
+          } catch {}
+          try {
+            localStorage.setItem(key, "1");
+          } catch {}
+          if (cleaned) {
+            try {
+              location.reload();
+            } catch {}
+          }
+        })();
+      })();
+    </script>
+    <script>
+      (() => {
+        const enabled = location.search.includes("debug=1");
+        if (!enabled) return;
+
+        const sessionId = "createcontext-undefined-chunk";
+        const runId = "pre-fix";
+        const ports = [7777, 7778, 7779, 7780, 7781, 7782, 7783, 7784, 7785, 7786];
+
+        const postJson = (url, payload) => {
+          try {
+            void fetch(url, {
+              method: "POST",
+              headers: { "Content-Type": "text/plain;charset=UTF-8" },
+              body: JSON.stringify(payload),
+              keepalive: true,
+            }).catch(() => {});
+          } catch {}
+        };
+
+        const send = (hypothesisId, msg, data) => {
+          const payload = {
+            sessionId,
+            runId,
+            hypothesisId,
+            msg,
+            ts: Date.now(),
+            data: data ?? null,
+          };
+          ports.forEach((port) => postJson(`http://127.0.0.1:${port}/event`, payload));
+        };
+
+        send("A", "boot:html-loaded", {
+          href: location.href,
+          userAgent: navigator.userAgent,
+        });
+
+        window.addEventListener(
+          "error",
+          (event) => {
+            send("A", "boot:error", {
+              message: event?.message,
+              filename: event?.filename,
+              lineno: event?.lineno,
+              colno: event?.colno,
+              stack: event?.error?.stack,
+            });
+          },
+          true,
+        );
+
+        window.addEventListener(
+          "unhandledrejection",
+          (event) => {
+            const reason = event?.reason;
+            send("A", "boot:unhandledrejection", {
+              reason: reason?.message ?? String(reason ?? ""),
+              stack: reason?.stack,
+            });
+          },
+          true,
+        );
+      })();
+    </script>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
